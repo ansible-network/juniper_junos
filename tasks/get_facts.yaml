@@ -1,0 +1,17 @@
+---
+- name: initialize function
+  include_tasks: includes/init.yaml
+
+- name: collect platform capabilities as facts
+  junos_capabilities:
+
+- name: run command and parse output
+  include_tasks: includes/cli/run.yaml
+  vars:
+    junos_command: "{{ item.command }}"
+    junos_parser: "op/text/{{ item.parser }}"
+    junos_parser_engine: "{{ item.engine | default('command_parser') }}"
+    junos_run_cli_command_pre_hook: "{{ item.pre_hook | default(None) }}"
+    junos_run_cli_command_post_hook: "{{ item.post_hook | default(None) }}"
+  loop: "{{ lookup('file', junos_get_facts_command_map) | from_yaml }}"
+  when: ansible_connection == 'network_cli' and junos_get_facts_subset |  intersect(item.groups)

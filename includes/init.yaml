@@ -1,0 +1,24 @@
+---
+- name: set role basic facts
+  set_fact:
+    ansible_network_junos_path: "{{ role_path }}"
+    ansible_network_junos_version: "devel"
+
+- name: display the role version to stdout
+  debug:
+    msg: "ansible_network.juniper_junos version is {{ ansible_network_junos_version }}"
+
+- name: validate ansible_network_os == 'junos'
+  fail:
+    msg: "expected ansible_network_os to be `junos`, got `{{ ansible_network_os }}`"
+  when: ansible_network_os != 'junos'
+
+- name: validate ansible_connection == 'network_cli' or ansible_connection == 'netconf'
+  fail:
+    msg: "expected ansible_network to be `network_cli` or `netconf`, got `{{ ansible_connection }}`"
+  when: ansible_connection != 'network_cli' or ansible_connection != 'netconf'
+
+- name: set ansible_provider_functions fact
+  set_fact:
+    ansible_network_provider_functions:
+      - get_facts
