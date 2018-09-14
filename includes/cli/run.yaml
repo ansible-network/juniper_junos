@@ -1,0 +1,24 @@
+---
+- name: run cli command pre hook
+  include_tasks: "{{ junos_run_cli_command_pre_hook }}"
+  when: junos_run_cli_command_pre_hook is defined and junos_run_cli_command_pre_hook
+
+- name: run command and parse output
+  cli:
+    command: "{{ junos_command }}"
+    parser: "{{ parser }}"
+    engine: "{{ junos_parser_engine | default(None) }}"
+  with_first_found:
+    - files:
+        - "{{ junos_parser }}"
+      paths:
+        - "{{ playbook_dir }}/parser_templates/junos"
+        - "~/.ansible/ansible_network/parser_templates/junos"
+        - "/etc/ansible/ansible_network/parser_templates/junos"
+        - "{{ role_path }}/parser_templates"
+  loop_control:
+    loop_var: parser
+
+- name: run cli command post hook
+  include_tasks: "{{ junos_run_cli_command_post_hook }}"
+  when: junos_run_cli_command_post_hook is defined and junos_run_cli_command_post_hook

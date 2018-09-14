@@ -1,0 +1,17 @@
+---
+# defaults file for juniper_junos
+
+junos_get_facts_command_map: "{{ role_path }}/vars/get_facts_command_map.yaml"
+junos_get_facts_subset: "{{ subset | default(['default']) }}"
+
+junos_netconf_port: "{{ netconf_port | default(830) }}"
+
+junos_rollback_enabled: true
+
+junos_config_file: "{{ config_file | default(None) }}"
+junos_config_text: "{{ config_text | default(None) }}"
+junos_config_replace: "{{ replace | default(False) }}"
+
+junos_get_facts_command_map: "{{ role_path }}/vars/get_facts_command_map.yaml"
+junos_get_facts_subset: "{{ subset | default(['default']) }}"
+
