@@ -1,0 +1,57 @@
+# configure target device
+#
+- name: enter exclusive configuration mode
+  cli:
+    command: configure exclusive
+  when: junos_configure_exclusive
+
+- name: enter configuration mode
+  cli:
+    command: configure
+  when: not junos_configure_exclusive
+
+- block:
+  - name: load configuration lines
+    cli:
+        command: "{{ line.strip() }}"
+    loop: "{{ junos_config_text | to_lines }}"
+    loop_control:
+      loop_var: line
+    when: line.strip() not in ('exit', 'commit', 'rollback', 'load')
+
+  - name: check for config diff
+    cli:
+      command: show | compare
+    register: junos_config_diff
+
+  - name: display diff
+    debug:
+      msg: "{{ junos_config_diff.stdout }}"
+
+  - name: commit configuration
+    cli:
+      command: commit
+    changed_when: true
+    when: junos_config_diff.stdout.split('\n') | length > 1 and not ansible_check_mode
+
+  - name: rollback configuration
+    cli:
+      command: rollback
+    changed_when: true
+    when: junos_config_diff.stdout.split('\n') | length > 1 and ansible_check_mode
+
+  - name: exit config mode
+    cli:
+      command: exit
+
+  rescue:
+  - name: rollback configuration in case of error while loading configuration
+    cli:
+      command: "{{ item }}"
+    loop:
+      - rollback
+      - exit
+
+  - name: set host failed
+    fail:
+      msg: "error loading configuration onto target device, rollbacked to previous configuration"

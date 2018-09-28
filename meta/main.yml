@@ -28,6 +28,7 @@ galaxy_info:
 
   galaxy_tags:
     - network
+    - networking
     - juniper
     - junos
 

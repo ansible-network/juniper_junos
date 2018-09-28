@@ -1,17 +1,21 @@
 ---
 # defaults file for juniper_junos
 
-junos_get_facts_command_map: "{{ role_path }}/vars/get_facts_command_map.yaml"
-junos_get_facts_subset: "{{ subset | default(['default']) }}"
-
+# configure_netconf function vars
 junos_netconf_port: "{{ netconf_port | default(830) }}"
 
-junos_rollback_enabled: true
-
-junos_config_file: "{{ config_file | default(None) }}"
-junos_config_text: "{{ config_text | default(None) }}"
+# config manager load vars
+junos_config_text: "{{ config_manager_text | default(None) }}"
 junos_config_replace: "{{ replace | default(False) }}"
+junos_configure_exclusive: "{{ config_manager_configure_exclusive | default(True) }}"
 
+junos_config_temp_config_file: "tmp_{{ inventory_hostname_short }}"
+junos_config_remove_temp_files: "{{ remove_temp_files | default(True) }}"
+
+# config manager get vars
+junos_get_configuration_command: show configuration
+junos_get_configuration_format: text
+
+# get_facts vars
 junos_get_facts_command_map: "{{ role_path }}/vars/get_facts_command_map.yaml"
 junos_get_facts_subset: "{{ subset | default(['default']) }}"
-
