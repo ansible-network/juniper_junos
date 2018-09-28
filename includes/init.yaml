@@ -16,7 +16,7 @@
 - name: validate ansible_connection == 'network_cli' or ansible_connection == 'netconf'
   fail:
     msg: "expected ansible_network to be `network_cli` or `netconf`, got `{{ ansible_connection }}`"
-  when: ansible_connection != 'network_cli' or ansible_connection != 'netconf'
+  when: "not ansible_connection == 'network_cli' or ansible_connection == 'netconf'"
 
 - name: set ansible_provider_functions fact
   set_fact:

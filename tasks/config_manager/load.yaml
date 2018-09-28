@@ -1,0 +1,15 @@
+---
+- name: initialize function
+  include_tasks: includes/init.yaml
+
+- name: validate role spec
+  validate_role_spec:
+    spec: load_config_spec.yaml
+
+- name: Include replace task
+  include_tasks: includes/configure/replace.yaml
+  when: junos_config_replace
+
+- name: Include configure task
+  include_tasks: includes/configure/configure.yaml
+  when: not junos_config_replace

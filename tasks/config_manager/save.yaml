@@ -1,0 +1,7 @@
+---
+# save_config task
+#
+- name: display mesage
+  debug:
+    msg: "ok"
+

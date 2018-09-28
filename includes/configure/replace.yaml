@@ -1,0 +1,99 @@
+---
+# replace.yaml
+#
+- name: loading configuration onto device
+  block:
+  - name: junos dir list
+    cli:
+      command: file list
+    register: junos_dir_listing
+
+  - name: create temp working dir
+    tempfile:
+      state: directory
+    register: junos_temp_working_dir
+    check_mode: false
+
+    # always set check mode to false here as this task needs to always run
+    # in order to fully execute the task list.
+  - name: template source config
+    copy:
+      content: "{{ junos_config_text }}"
+      dest: "{{ junos_temp_working_dir.path }}/{{ junos_config_temp_config_file }}"
+    check_mode: false
+
+  - name: remove old config file from device
+    cli:
+      command: "file delete {{ junos_config_temp_config_file }}"
+    changed_when: true
+    when: junos_config_temp_config_file in junos_dir_listing.stdout
+
+  - name: copy configuration to device
+    net_put:
+      src: "{{ junos_temp_working_dir.path }}/{{ junos_config_temp_config_file }}"
+      dest: "~/{{ junos_config_temp_config_file }}"
+
+  - name: enter exclusive configuration mode
+    cli:
+      command: configure exclusive
+    when: junos_configure_exclusive
+
+  - name: enter configuration mode
+    cli:
+      command: configure
+    when: not junos_configure_exclusive
+
+  - block:
+    - name: replace current active configuration
+      cli:
+        command: "load override {{ junos_config_temp_config_file }}"
+      changed_when: true
+
+    - name: check for config diff
+      cli:
+        command: show | compare
+      register: junos_config_diff
+
+    - name: display diff
+      debug:
+        msg: "{{ junos_config_diff.stdout }}"
+
+    - name: commit configuration
+      cli:
+        command: commit
+      changed_when: true
+      when: junos_config_diff.stdout.split('\n') | length > 1 and not ansible_check_mode
+
+    - name: discard configuration in case of no diff or check mode
+      cli:
+        command: rollback
+      changed_when: true
+      when: junos_config_diff.stdout.split('\n') | length == 1 or ansible_check_mode
+
+    - name: exit config mode
+      cli:
+        command: exit
+
+  rescue:
+  - name: rollback configuration in case of error while replacing configuration
+    cli:
+      command: "{{ item }}"
+    loop:
+      - rollback
+      - exit
+
+  - name: set host failed
+    fail:
+      msg: "error loading configuration onto target device, rollbacked to previous configuration"
+
+  always:
+  - name: remove uploaded configuration
+    cli:
+      command: "file delete {{ junos_config_temp_config_file }}"
+    when: junos_config_remove_temp_files
+
+  - name: remove temp working dir
+    file:
+      path: "{{ junos_temp_working_dir.path }}"
+      state: absent
+    when: junos_config_remove_temp_files
