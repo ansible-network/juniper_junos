@@ -1,0 +1,49 @@
+---
+- debug: msg="START config_manager/load.yaml replace function on connection={{ ansible_connection }}"
+
+- name: ensure netconf is enabled
+  junos_netconf:
+    netconf_port: 22
+
+- name: setup - remove syslog
+  junos_config: &rm
+    lines:
+      - delete system syslog file test3 any any
+      - delete system syslog file test4 any any
+  connection: netconf
+
+- name: fetch syslog configuration
+  junos_command:
+    commands: show configuration
+  register: show_config_result
+
+- name: configure syslog
+  junos_config:
+    lines:
+      - set system syslog file test3 any any
+      - set system syslog file test4 any any
+  connection: netconf
+
+- name: include juniper_junos function
+  include_role:
+    name: "{{ juniper_junos_role_path }}"
+    tasks_from: config_manager/load
+  vars:
+    config_manager_replace: True
+    config_manager_text: "{{ show_config_result.stdout[0] }}"
+
+- name: fetch syslog configuration
+  junos_command:
+    commands: show configuration | display set
+  register: show_config_result
+
+- assert:
+    that:
+      - "'set system syslog file test3 any any' not in show_config_result.stdout_lines[0]"
+      - "'set system syslog file test4 any any' not in show_config_result.stdout_lines[0]"
+
+- name: teardown - remove syslog config
+  junos_config: *rm
+  connection: netconf
+
+- debug: msg="END config_manager/load.yaml replace function on connection={{ ansible_connection }}"

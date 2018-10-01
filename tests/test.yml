@@ -1,5 +1,4 @@
 ---
-- hosts: localhost
-  remote_user: root
-  roles:
-    - juniper_junos
+# main entrypoint
+
+- import_playbook: config_manager/test.yml

@@ -6,7 +6,7 @@ junos_netconf_port: "{{ netconf_port | default(830) }}"
 
 # config manager load vars
 junos_config_text: "{{ config_manager_text | default(None) }}"
-junos_config_replace: "{{ replace | default(False) }}"
+junos_config_replace: "{{ config_manager_replace | default(False) }}"
 junos_configure_exclusive: "{{ config_manager_configure_exclusive | default(True) }}"
 
 junos_config_temp_config_file: "tmp_{{ inventory_hostname_short }}"
