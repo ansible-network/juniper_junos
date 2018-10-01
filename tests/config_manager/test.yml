@@ -1,0 +1,4 @@
+- hosts: appliance
+  connection: network_cli
+  roles:
+    - config_manager

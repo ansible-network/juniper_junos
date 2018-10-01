@@ -16,7 +16,7 @@ argument_spec:
   config_manager_replace:
     description:
       - This value enables or disables the configuration replace feature of the function.
-    type: boolean
+    type: bool
     default: False
 
   junos_config_remove_temp_files:
@@ -24,5 +24,5 @@ argument_spec:
       - Configures the function to remove or not remove the temp files created when preparing
         to load the configuration file. There are two locations for temp files, one on the
         Ansible controller and one on the device. This argument accepts a boolean value.
-    type: boolean
+    type: bool
     default: True

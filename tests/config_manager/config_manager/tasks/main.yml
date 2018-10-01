@@ -1,0 +1,10 @@
+---
+- name: set role path
+  set_fact:
+    juniper_junos_role_path: "{{ role_path.split('/tests/config_manager/config_manager')[0] }}"
+
+- name: test load function
+  import_tasks: load.yml
+
+- name: test replace function
+  import_tasks: replace.yml
