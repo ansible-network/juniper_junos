@@ -1,0 +1,7 @@
+major_changes:
+- Initial release of the ``juniper_junos`` Ansible role.
+- This role provides functions to perform automation activities on Juniper JUNOS devices.
+
+new_functions:
+- NEW ``config_manager/load`` function provides a means to load or replace configuration text onto a target device running Juniper JUNOS.
+- NEW ``config_manager/save`` function saves the current active (running) configuration to the startup configuration.
