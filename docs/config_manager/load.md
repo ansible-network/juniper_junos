@@ -33,7 +33,7 @@ The `config_manager/load` function also provides support for replacing the curre
 configuration on a device.
 
 In order to replace the configuration, the function as before but adds the
-value `replace: yes` to the playbook to indicate that the configuration should
+value `config_manager_replace: yes` to the playbook to indicate that the configuration should
 be replaced with the configuration value set in `config_manager_text`.
 
 Note: Take caution when doing configuration replace that you do not
