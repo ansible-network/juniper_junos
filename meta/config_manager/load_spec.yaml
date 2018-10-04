@@ -6,14 +6,14 @@ argument_spec:
         set to `junos` for this provider.
     required: true
 
-  config_manager_text:
+  junos_config_text:
     description:
       - Provide the network device configuration as a single string.  The
         configuration text will be loaded onto the target network deivce.
     type: str
     required: True
 
-  config_manager_replace:
+  junos_config_replace:
     description:
       - This value enables or disables the configuration replace feature of the function.
     type: bool
