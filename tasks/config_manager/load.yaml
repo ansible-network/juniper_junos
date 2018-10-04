@@ -4,7 +4,7 @@
 
 - name: validate role spec
   validate_role_spec:
-    spec: load_config_spec.yaml
+    spec: config_manager/load_spec.yaml
 
 - name: Include replace task
   include_tasks: includes/configure/replace.yaml
