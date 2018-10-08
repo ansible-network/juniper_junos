@@ -1,0 +1,42 @@
+---
+- name: "check if user(s) to configure is provided"
+  fail:
+    msg: "no user provided to configure"
+  when:  users is not defined
+  delegate_to: localhost
+
+- name: "check for required fact - name"
+  fail:
+    msg: "missing required fact: name"
+  with_items: "{{ users }}"
+  when: ( user.name is not defined )
+  loop_control:
+    loop_var: user
+  delegate_to: localhost
+
+- name: "fetch existing user account details"
+  cli:
+    command: show configuration system login | display set
+  register: user_config
+
+- name: "filter out users through user_manager"
+  junos_user_manager:
+    new_users: "{{ users }}"
+    user_config: "{{ user_config.stdout }}"
+  register: filtered_users
+  delegate_to: localhost
+
+- name: "set users to be configured"
+  set_fact:
+    users: "{{ filtered_users.stdout }}"
+  delegate_to: localhost
+
+- name: "fetch template for configuring user(s)"
+  set_fact:
+    junos_config_text: "{{ lookup('config_template', 'configure_user.j2') }}"
+  when: users
+  delegate_to: localhost
+
+- include_tasks: config_manager/load.yaml
+  when: users
+  delegate_to: localhost
