@@ -3,7 +3,7 @@
 
 - name: ensure netconf is enabled
   junos_netconf:
-    netconf_port: 22
+    netconf_port: "{{ netconf_port }}"
 
 - name: setup - remove user config
   junos_config: &rm
