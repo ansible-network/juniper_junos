@@ -33,7 +33,7 @@
 
 - name: fetch user config
   junos_command:
-    commands: show configuration | display set
+    commands: show configuration system login | display set
   register: show_config_result
 
 - assert:
