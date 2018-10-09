@@ -1,0 +1,52 @@
+---
+- debug: msg="START configure_user function on connection={{ ansible_connection }}"
+
+- name: ensure netconf is enabled
+  junos_netconf:
+    netconf_port: "{{ netconf_port }}"
+
+- name: setup - remove user config
+  junos_config: &rm
+    lines:
+      - delete system login user test_user_1
+      - delete system login user test_user_2
+      - delete system login user test_user_3
+  connection: netconf
+
+- name: include juniper_junos load function
+  include_role:
+    name: "{{ juniper_junos_role_path }}"
+    tasks_from: configure_user
+  vars:
+    users:
+      - name: test_user_1
+        role: super-user
+        encrypted_password: "{{ lookup('file', '{{ role_path }}/tests/configure_user/fixtures/encrypted_pwd') }}"
+
+      - name: test_user_2
+        role: operator
+        full_name: TestUser2
+
+      - name: test_user_3
+        role: read-only
+        sshkey: "{{ lookup('file', '{{ role_path }}/tests/configure_user/fixtures/sshkey.pub') }}"
+
+- name: fetch user config
+  junos_command:
+    commands: show configuration system login | display set
+  register: show_config_result
+
+- assert:
+    that:
+      - "'set system login user test_user_1 class super-user' in show_config_result.stdout_lines[0]"
+      - "'set system login user test_user_1 authentication encrypted-password 9688670E24F699F44A43DC7D2E2345AEE91EB1958A4C08AB0BCA87F1714FF0F6BFD06DCB3B03C31B2C85719F108A44A034EF26439DB76BE0C8FF3DBF4D7578B8' in show_config_result.stdout_lines[0]"
+      - "'set system login user test_user_2 class operator' in show_config_result.stdout_lines[0]"
+      - "'set system login user test_user_2 full-name TestUser2' in show_config_result.stdout_lines[0]"
+      - "'set system login user test_user_3 class read-only' in show_config_result.stdout_lines[0]"
+      - "'set system login user test_user_3 authentication ssh-rsa \"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQiYB1PkV7YpAvjovubyO1g1ba0PjTnIgf9hOMBIV2kdy2xiqSMz2cv5NNKOh+903kHwyeGFCFFGft6pKdcdHWcVp/fjQ7+n0tIjRzqv5kb9PAQCz+4ypRgG6DOsSzpcPM/mg+jU6k3WQYJtsE8XPa1bYM4cUwNv5Pvr3BcqLsDV3eJFEJNSas3cUlia4/djZ9WepwfhhWBwKuZDyyPoYOGmiQMQMbmfL0thR0EVbtqNEVnxlDXUfcUQeH9CLnG0bdgo4umC5cbGVm4kg/04H0tZEp7TvQK7ZzWVPG1/aNH+GZyHzUbcRbyE8t5HXc7bLIOqV/MSSfpv+Yvm+t6Jf1DpCXQ6jtsx8aBvnMiVWHyv5ihIrO5o5s8YIICe/5DjWt3ZlaQnPZ1Ap8Q/TeppM/jqtaIjzmcdbSfPcoSQpTi/bTra0zOYsUc3kbCnKOFuZbMRE4NbemsGjHp1EY5plt1/FTCtqORfYTWtioiOtFl2E+/CXBzN/xkvcdh2ticeJ265++G9JAZ3p+MSHgYb4dCBYMPkTfkpkvhkv2S7rLWZkfhW7g/WS7ZfK1bVxTieRAG6Q2U19HFtxT7RZ+E4Nwu0eXGECBhFQRVYXOQXaOoYEG8mFjoEnsiIBofmU8izB4or5Z1ANyXOrmEaU1BkTfQ1PON50FpqdXp2a8iGfRTWqN== test@Test-Host-1.local\"' in show_config_result.stdout_lines[0]"
+
+- name: teardown - remove user config
+  junos_config: *rm
+  connection: netconf
+
+- debug: msg="END configure_user function on connection={{ ansible_connection }}"

@@ -1,0 +1,19 @@
+{% for user in users %}
+{% if user.state is defined and user.state == 'absent' %}
+delete system login user {{ user.name }}
+{% else %}
+{% if user.encrypted_password is defined %}
+set system login user {{ user.name }} authentication encrypted-password "{{ user.encrypted_password }}"
+{% endif %}
+{% if user.role is defined %}
+set system login user {{ user.name }} class {{ user.role }}
+{% endif %}
+{% if user.full_name is defined %}
+set system login user {{ user.name }} full-name {{ user.full_name }}
+{% endif %}
+{% if user.sshkey is defined %}
+{% set key_type = user.sshkey.split(' ')[0] %}
+set system login user {{ user.name }} authentication {{ key_type }} "{{ user.sshkey }}"
+{% endif %}
+{% endif %}
+{% endfor %}

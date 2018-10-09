@@ -1,0 +1,6 @@
+- hosts: appliance
+  connection: network_cli
+  roles:
+    - configure_user
+  vars:
+    netconf_port: 830
