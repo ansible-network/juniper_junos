@@ -2,6 +2,9 @@
 {% if user.state is defined and user.state == 'absent' %}
 delete system login user {{ user.name }}
 {% else %}
+{% if user.encrypted_password is defined %}
+set system login user {{ user.name }} authentication encrypted-password "{{ user.encrypted_password }}"
+{% endif %}
 {% if user.role is defined %}
 set system login user {{ user.name }} class {{ user.role }}
 {% endif %}

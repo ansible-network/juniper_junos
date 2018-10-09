@@ -14,6 +14,15 @@
     loop_var: user
   delegate_to: localhost
 
+- name: "check for required fact - role"
+  fail:
+    msg: "missing required fact: role"
+  with_items: "{{ users }}"
+  when: ( user.role is not defined )
+  loop_control:
+    loop_var: user
+  delegate_to: localhost
+
 - name: "fetch existing user account details"
   cli:
     command: show configuration system login | display set

@@ -39,7 +39,6 @@ class UserManager:
             full_name = match.group(1)
             return full_name
 
-
     def generate_existing_users(self):
         match = re.findall(r'^set system login user (\S+)', self.__user_config_data, re.M)
         if not match:
