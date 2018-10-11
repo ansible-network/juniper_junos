@@ -14,12 +14,12 @@ import re
 
 from ansible.plugins.action import ActionBase
 
+
 class UserManager:
 
     def __init__(self, new_users, user_config_data):
         self.__new_users = new_users
         self.__user_config_data = user_config_data
-
 
     def _parse_sshkey(self, cfg):
         match = re.search(r'ssh-(?:\S+) (.*)', cfg, re.M)
