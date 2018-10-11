@@ -4,4 +4,3 @@
 - name: display mesage
   debug:
     msg: "ok"
-
