@@ -1,0 +1,3 @@
+bugfixes:
+- Fix config manager spec option `juniper_junos#6 <https://github.com/ansible-network/juniper_junos/pull/6>`_.
+- Fix zuul CI hooks `juniper_junos#5 <https://github.com/ansible-network/juniper_junos/pull/6>`_.

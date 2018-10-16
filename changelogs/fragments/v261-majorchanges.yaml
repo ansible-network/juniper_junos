@@ -1,0 +1,2 @@
+major_changes:
+- Added configure_user function `juniper_junos#8 <https://github.com/ansible-network/juniper_junos/pull/8>`_.
