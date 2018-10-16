@@ -1,0 +1,3 @@
+minor_changes:
+- Only set testenv:linters to python3 `juniper_junos#12 <https://github.com/ansible-network/juniper_junos/pull/12>`_.
+- Add support for tox `juniper_junos#11 <https://github.com/ansible-network/juniper_junos/pull/11>`_.
