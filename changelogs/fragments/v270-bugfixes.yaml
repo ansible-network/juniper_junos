@@ -1,0 +1,2 @@
+bugfixes:
+- Fix fails when ansible_connection == netconf `juniper_junos#15 <https://github.com/ansible-network/juniper_junos/pull/15>`_

@@ -1,0 +1,2 @@
+new_functions:
+- Add support for edit function `juniper_junos#16 <https://github.com/ansible-network/juniper_junos/pull/16>`_
