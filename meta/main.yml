@@ -33,4 +33,5 @@ galaxy_info:
     - junos
 
 dependencies:
-  - ansible-network.network-engine
+  - src: ansible-network.network-engine
+    version: 2.6.6
