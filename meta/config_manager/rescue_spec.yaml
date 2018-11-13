@@ -1,0 +1,27 @@
+---
+argument_spec:
+  ansible_network_os:
+    description:
+      - Set the name of the Ansible network OS platform.  This value should be
+        set to `junos` for this provider.
+    required: true
+
+  junos_config_set_rescue:
+    descriptiion:
+      - This setting indicates whether or not the to set the current running
+        configuration as the rescue configuration.
+    type: bool
+    default: False
+
+  junos_config_load_rescue:
+    descriptiion:
+      - This setting indicates whether or not to replace the current configuration
+        with the rescue configuration.
+    type: bool
+    default: False
+
+  junos_config_delete_rescue:
+    descriptiion:
+      - This setting indicates whether or not the to delete the rescue configuration checkpoint that is already set.
+    type: bool
+    default: False

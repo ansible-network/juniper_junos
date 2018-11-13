@@ -8,3 +8,6 @@
 
 - name: test replace function
   import_tasks: replace.yml
+
+- name: test replace function
+  import_tasks: rescue.yml

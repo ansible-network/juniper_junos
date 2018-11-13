@@ -1,0 +1,39 @@
+---
+- name: initialize function
+  include_tasks: includes/init.yaml
+
+- name: validate role spec
+  validate_role_spec:
+    spec: config_manager/rescue_spec.yaml
+
+- name: set current running configuration as rescue configuration
+  cli:
+    command: request system configuration rescue save
+  when: junos_config_set_rescue
+
+- name: delete previously set rescue configuration
+  cli:
+    command: request system configuration rescue delete
+  when: junos_config_delete_rescue
+
+- name: load rescue configuration
+  block:
+    - name: enter exclusive configuration mode
+      cli:
+        command: configure exclusive
+      when: junos_configure_exclusive
+
+    - name: enter configuration mode
+      cli:
+        command: configure
+      when: not junos_configure_exclusive
+
+    - name: load rescue configuration
+      cli:
+        command: "{{ line }}"
+      loop:
+        - rollback rescue
+        - commit and-quit
+      loop_control:
+        loop_var: line
+  when: junos_config_load_rescue_config

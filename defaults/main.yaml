@@ -16,6 +16,11 @@ junos_config_remove_temp_files: "{{ remove_temp_files | default(True) }}"
 junos_get_configuration_command: show configuration
 junos_get_configuration_format: text
 
+# config manager rescue vars
+junos_config_set_rescue: "{{ config_manager_set_rescue | default(False) }}"
+junos_config_load_rescue_config: "{{ config_manager_load_rescue_config | default(False) }}"
+junos_config_delete_rescue: "{{ config_manager_delete_rescue | default(False) }}"
+
 # get_facts vars
 junos_get_facts_command_map: "{{ role_path }}/vars/get_facts_command_map.yaml"
 junos_get_facts_subset: "{{ subset | default(['default']) }}"

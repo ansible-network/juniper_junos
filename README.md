@@ -20,6 +20,7 @@ Please see the documentation link for each function for details on how to use
 the function in an Ansible playbook.
 
 * load [[source]](https://github.com/ansible-network/juniper_junos/blob/devel/tasks/config_manager/load.yaml) [[docs]](https://github.com/ansible-network/juniper_junos/blob/devel/docs/config_manager/load.md)
+* rescue [[source]](https://github.com/ansible-network/juniper_junos/blob/devel/tasks/config_manager/rescue.yaml) [[docs]](https://github.com/ansible-network/juniper_junos/blob/devel/docs/config_manager/rescue.md)
 * save [[source]](https://github.com/ansible-network/juniper_junos/blob/devel/tasks/config_manager/save.yaml) [[docs]](https://github.com/ansible-network/juniper_junos/blob/devel/docs/config_manager/save.md)
 * get_facts [[source]](https://github.com/ansible-network/juniper_junos/blob/devel/tasks/get_facts.yaml) [[docs]](https://github.com/ansible-network/juniper_junos/blob/devel/docs/get_facts.md)
 * configure_netconf [[source]](https://github.com/ansible-network/juniper_junos/blob/devel/tasks/configure_netconf.yaml) [[docs]](https://github.com/ansible-network/juniper_junos/blob/devel/docs/configure_netconf.md)
