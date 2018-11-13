@@ -22,3 +22,5 @@
   set_fact:
     ansible_network_provider_functions:
       - get_facts
+      - configure_netconf
+      - configure_user

@@ -1,0 +1,14 @@
+---
+argument_spec:
+  ansible_network_os:
+    description:
+      - Set the name of the Ansible network OS platform.  This value should be
+        set to `junos` for this provider.
+    required: true
+
+  junos_config_includes:
+    description:
+      - Provides a list of configuration task that are include at runtime. The individual value in the
+        list is a path to the task file that should be executed.
+    type: list
+    required: true

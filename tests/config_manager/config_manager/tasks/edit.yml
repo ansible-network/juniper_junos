@@ -1,0 +1,53 @@
+---
+- debug: msg="START config_manager/edit.yaml confgiure function on connection={{ ansible_connection }}"
+
+- name: ensure netconf is enabled
+  junos_netconf:
+    netconf_port: 22
+
+- name: setup - remove syslog
+  junos_config: &rm
+    lines:
+      - delete system syslog file test4 any any
+      - delete system syslog file test5 any any
+  connection: netconf
+
+- name: include juniper_junos edit function to configure syslog
+  include_role:
+    name: "{{ juniper_junos_role_path }}"
+    tasks_from: config_manager/edit
+  vars:
+    config_manager_includes:
+      - "{{ juniper_junos_role_path }}/tests/config_manager/config_manager/includes/syslog/present.yaml"
+    ansible_connection: netconf
+
+- name: fetch syslog configuration
+  junos_command:
+    commands: show configuration | display set
+  register: show_config_result
+
+- assert:
+    that:
+      - "'set system syslog file test4 any any' in show_config_result.stdout_lines[0]"
+      - "'set system syslog file test5 any any' in show_config_result.stdout_lines[0]"
+
+- name: include juniper_junos edit function to delete syslog
+  include_role:
+    name: "{{ juniper_junos_role_path }}"
+    tasks_from: config_manager/edit
+  vars:
+    config_manager_includes:
+      - "{{ juniper_junos_role_path }}/tests/config_manager/config_manager/includes/syslog/absent.yaml"
+    ansible_connection: netconf
+
+- name: fetch syslog configuration
+  junos_command:
+    commands: show configuration | display set
+  register: show_config_result
+
+- assert:
+    that:
+      - "'set system syslog file test4 any any' not in show_config_result.stdout_lines[0]"
+      - "'set system syslog file test5 any any' not in show_config_result.stdout_lines[0]"
+
+- debug: msg="END config_manager/edit.yaml confgiure function on connection={{ ansible_connection }}"

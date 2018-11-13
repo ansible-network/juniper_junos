@@ -1,0 +1,5 @@
+- name: delete syslog
+  junos_config:
+    lines:
+      - "delete system syslog file test5 any any"
+      - "delete system syslog file test4 any any"

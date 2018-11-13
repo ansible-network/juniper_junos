@@ -1,0 +1,5 @@
+- name: configure syslog
+  junos_config:
+    lines:
+      - "set system syslog file test5 any any"
+      - "set system syslog file test4 any any"

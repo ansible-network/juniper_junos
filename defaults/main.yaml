@@ -16,6 +16,9 @@ junos_config_remove_temp_files: "{{ remove_temp_files | default(True) }}"
 junos_get_configuration_command: show configuration
 junos_get_configuration_format: text
 
+# config manger edit vars:
+junos_config_includes: "{{ config_manager_includes | default(None) }}"
+
 # get_facts vars
 junos_get_facts_command_map: "{{ role_path }}/vars/get_facts_command_map.yaml"
 junos_get_facts_subset: "{{ subset | default(['default']) }}"
