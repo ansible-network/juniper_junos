@@ -1,0 +1,23 @@
+---
+- name: initialize function
+  include_tasks: includes/init.yaml
+
+- name: validate role spec
+  validate_role_spec:
+    spec: config_manager/edit_spec.yaml
+
+
+- name: configure the target device
+  block:
+    # iterate over the set of includes to configure the device
+    - name: iterate over configuration tasks
+      include_tasks: "{{ task }}"
+      loop: "{{ junos_config_includes }}"
+      loop_control:
+        loop_var: task
+  rescue:
+    - name: set host failed
+      fail:
+        msg: "error loading configuration onto target device"
+
+  when: not ansible_check_mode

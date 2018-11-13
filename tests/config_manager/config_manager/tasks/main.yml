@@ -8,3 +8,6 @@
 
 - name: test replace function
   import_tasks: replace.yml
+
+- name: test edit function
+  import_tasks: edit.yml
