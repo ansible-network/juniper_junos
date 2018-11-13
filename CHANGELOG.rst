@@ -2,6 +2,19 @@
 Ansible Network juniper_junos
 =============================
 
+.. _Ansible Network juniper_junos_v2.6.2:
+
+v2.6.2
+======
+
+.. _Ansible Network juniper_junos_v2.6.2_Bugfixes:
+
+Bugfixes
+--------
+
+- Fix fails when ansible_connection == netconf `juniper_junos#15 <https://github.com/ansible-network/juniper_junos/pull/15>`_.
+
+
 .. _Ansible Network juniper_junos_v2.6.1:
 
 v2.6.1
@@ -58,3 +71,4 @@ New Functions
 - NEW ``config_manager/load`` function provides a means to load or replace configuration text onto a target device running Juniper JUNOS.
 
 - NEW ``config_manager/save`` function saves the current active (running) configuration to the startup configuration.
+
