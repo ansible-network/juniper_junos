@@ -1,20 +1,7 @@
 ---
-- name: "check for required fact - Vlan Name"
-  fail:
-    msg: "missing required fact: Vlan Name"
-  loop: "{{ vlans }}"
-  when: ( vlan.name is not defined )
-  loop_control:
-    loop_var: vlan
-  delegate_to: localhost
-
-- name: "check for required fact - Vlan ID"
-  fail:
-    msg: "missing required fact: Vlan ID"
-  loop: "{{ vlans }}"
-  when: ( vlan.id is not defined )
-  loop_control:
-    loop_var: vlan
+- name: validate role spec
+  validate_role_spec:
+    spec: configure_vlan_spec.yaml
   delegate_to: localhost
 
 - name: "check if vlan ID is greater than 1"
