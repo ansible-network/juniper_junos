@@ -1,8 +1,8 @@
 ---
-#- name: validate role spec
-#  validate_role_spec:
-#    spec: configure_system_property_spec.yaml
-#  delegate_to: localhost
+- name: validate role spec
+  validate_role_spec:
+    spec: configure_system_property_spec.yaml
+  delegate_to: localhost
 
 - name: "check if vrf-table-label static value is greater than 16"
   fail:
