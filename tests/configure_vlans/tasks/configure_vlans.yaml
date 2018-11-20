@@ -6,7 +6,7 @@
   junos_netconf:
     netconf_port: "{{ netconf_port }}"
 
-- name: setup - remove user config
+- name: setup - remove vlan config
   junos_config: &rm
     lines:
       - delete vlan_10
@@ -19,7 +19,7 @@
     name: "{{ juniper_junos_role_path }}"
     tasks_from: configure_vlans
   vars:
-    users:
+    vlans:
       - name: vlan_10
         id: 10
 
