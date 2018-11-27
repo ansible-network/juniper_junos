@@ -2,6 +2,23 @@
 Ansible Network juniper_junos
 =============================
 
+.. _Ansible Network juniper_junos_v2.7.1:
+
+v2.7.1
+======
+
+.. _Ansible Network juniper_junos_v2.7.1_New Functions:
+
+New Functions
+-------------
+
+- Add support for get_facts function `juniper_junos#24 <https://github.com/ansible-network/juniper_junos/pull/24>`_
+
+- Add support for configure_system_properties function `juniper_junos#23 <https://github.com/ansible-network/juniper_junos/pull/23>`_
+
+- Add support for configure_vlan function `juniper_junos#22 <https://github.com/ansible-network/juniper_junos/pull/22>`_
+
+
 .. _Ansible Network juniper_junos_v2.7.0:
 
 v2.7.0
@@ -12,7 +29,7 @@ v2.7.0
 New Functions
 -------------
 
-- Add support for edit function `juniper_junos#16 <https://github.com/ansible-network/juniper_junos/pull/16>`_.
+- Add support for edit function `juniper_junos#16 <https://github.com/ansible-network/juniper_junos/pull/16>`_
 
 
 .. _Ansible Network juniper_junos_v2.7.0_Bugfixes:
@@ -20,7 +37,7 @@ New Functions
 Bugfixes
 --------
 
-- Fix fails when ansible_connection == netconf `juniper_junos#15 <https://github.com/ansible-network/juniper_junos/pull/15>`_.
+- Fix fails when ansible_connection == netconf `juniper_junos#15 <https://github.com/ansible-network/juniper_junos/pull/15>`_
 
 
 .. _Ansible Network juniper_junos_v2.6.1:

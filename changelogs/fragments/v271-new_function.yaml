@@ -1,0 +1,4 @@
+new_functions:
+- Add support for get_facts function `juniper_junos#24 <https://github.com/ansible-network/juniper_junos/pull/24>`_
+- Add support for configure_system_properties function `juniper_junos#23 <https://github.com/ansible-network/juniper_junos/pull/23>`_
+- Add support for configure_vlan function `juniper_junos#22 <https://github.com/ansible-network/juniper_junos/pull/22>`_
