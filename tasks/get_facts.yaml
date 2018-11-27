@@ -5,13 +5,30 @@
 - name: collect platform capabilities as facts
   junos_capabilities:
 
-- name: run command and parse output
+- name: run command and parse output for network_cli connection
   include_tasks: includes/cli/run.yaml
   vars:
-    junos_command: "{{ item.command }}"
-    junos_parser: "op/text/{{ item.parser }}"
+    junos_command: "{{ item.command | default(None) }}"
+    junos_rpc: "{{ item.rpc | default(None) }}"
+    junos_parser: "op/{{ item.format }}/{{ item.parser }}"
     junos_parser_engine: "{{ item.engine | default('command_parser') }}"
     junos_run_cli_command_pre_hook: "{{ item.pre_hook | default(None) }}"
     junos_run_cli_command_post_hook: "{{ item.post_hook | default(None) }}"
+    junos_output_format:  "{{ item.format | default('text') }}"
+    junos_fact_type: "{{ item.fact_type | default('default') }}"
   loop: "{{ lookup('file', junos_get_facts_command_map) | from_yaml }}"
   when: ansible_connection == 'network_cli' and junos_get_facts_subset |  intersect(item.groups)
+
+- name: run command and parse output for netconf connection
+  include_tasks: includes/netconf/run.yaml
+  vars:
+    junos_command: "{{ item.command | default(None) }}"
+    junos_rpc: "{{ item.rpc | default(None) }}"
+    junos_parser: "op/{{ item.format }}/{{ item.parser }}"
+    junos_parser_engine: "{{ item.engine | default('command_parser') }}"
+    junos_run_cli_command_pre_hook: "{{ item.pre_hook | default(None) }}"
+    junos_run_cli_command_post_hook: "{{ item.post_hook | default(None) }}"
+    junos_output_format:  "{{ item.format | default('text') }}"
+    junos_fact_type: "{{ item.fact_type | default('default') }}"
+  loop: "{{ lookup('file', junos_get_facts_command_map) | from_yaml }}"
+  when: ansible_connection == 'netconf' and junos_get_facts_subset |  intersect(item.groups)

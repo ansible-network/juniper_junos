@@ -1,0 +1,97 @@
+---
+- name: parser meta data
+  parser_metadata:
+    version: 1.0
+    command: show interfaces
+    network_os: junos
+
+- name: match sections
+  pattern_match:
+    regex: "^Physical interface:"
+    match_all: yes
+    match_greedy: yes
+  register: context
+
+- name: match interface values
+  pattern_group:
+    - name: match name
+      pattern_match:
+        regex: "Physical interface: (\\S+),"
+        content: "{{ item }}"
+      register: name
+
+    - name: match interface type
+      pattern_match:
+        regex: "Type: (\\S+),"
+        content: "{{ item }}"
+      register: type
+
+    - name: match mtu
+      pattern_match:
+        regex: "MTU: (\\S+),"
+        content: "{{ item }}"
+      register: mtu
+
+    - name: match speed
+      pattern_match:
+        regex: "Speed: (\\S+)"
+        content: "{{ item }}"
+      register: speed
+
+    - name: match administrative state
+      pattern_match:
+        regex: "Physical link is (\\S+)"
+        content: "{{ item }}"
+      register: enabled
+
+    - name: match duplex
+      pattern_match:
+        regex: "Link type\\s+: (\\S+)"
+        content: "{{ item }}"
+      register: duplex
+
+    - name: match input packets
+      pattern_match:
+        regex: "Input packets : (\\d+)"
+        content: "{{ item }}"
+      register: in_packets
+
+    - name: match out packets
+      pattern_match:
+        regex: "Output packets: (\\d+)"
+        content: "{{ item }}"
+      register: out_packets
+
+  loop: "{{ context }}"
+  register: values
+
+- name: template interface values
+  loop: "{{ values }}"
+  register: interfaces
+  export: yes
+  export_as: dict
+  extend: juniper_junos
+  json_template:
+    template:
+      - key: "{{ item.name.matches.0 }}"
+        object:
+          - key: name
+            value: "{{ item.name.matches.0 }}"
+          - key: type
+            value: "{{ item.type.matches.0 }}"
+          - key: mtu
+            value: "{{ item.mtu.matches.0 }}"
+          - key: speed
+            value: "{{ item.speed.matches.0 }}"
+          - key: enabled
+            value: "{{ item.enabled.matches.0.lower() == 'up' }}"
+          - key: admin-status
+            value: "{{ (item.enabled.matches.0.lower()  == 'up') | ternary('enabled', 'disabled') }}"
+          - key: duplex
+            value: "{{ item.duplex.matches.0 }}"
+          - key: counters
+            object:
+              - key: in-packets
+                value: "{{ item.in_packets.matches.0 }}"
+              - key: out-packets
+                value: "{{ item.out_packets.matches.0 }}"

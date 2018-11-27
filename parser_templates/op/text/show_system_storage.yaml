@@ -1,0 +1,44 @@
+---
+- name: parser meta data
+  parser_metadata:
+    version: 1.0
+    command: show system storage
+    network_os: junos
+
+- name: match cli sections
+  pattern_match:
+    regex: "^(?!Filesystem)[^\\s].*$"
+    match_all: yes
+    match_greedy: yes
+  register: cli_section
+
+- name: match cli values
+  pattern_group:
+    - name: match row
+      pattern_match:
+        regex: '^(?P<filesystem>.*?)\s+(?P<size>.*?)\s+(?P<used>.*?)\s+(?P<avail>.*?)\s+(?P<capacity>.*?)\s+(?P<mounted_on>.*?)\s+'
+        content: "{{ item }}"
+      register: fact
+  loop: "{{ cli_section }}"
+  register: cli_values
+
+- name: template to platform vlan
+  export: yes
+  export_as: list
+  extend: juniper_junos.system
+  loop: "{{ cli_values }}"
+  register: storage
+  json_template:
+    template:
+      - key: filesystem
+        value: "{{ item.fact.filesystem }}"
+      - key: size
+        value: "{{ item.fact.size }}"
+      - key: used
+        value: "{{ item.fact.used }}"
+      - key: available
+        value: "{{ item.fact.avail }}"
+      - key: capacity
+        value: "{{ item.fact.capacity }}"
+      - key: mounted_on
+        value: "{{ item.fact.mounted_on }}"

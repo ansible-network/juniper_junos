@@ -1,0 +1,23 @@
+---
+- name: set role path
+  set_fact:
+    juniper_junos_role_path: "{{ role_path.split('/tests/get_facts/get_facts')[0] }}"
+
+- name: include juniper_junos load function
+  include_role:
+    name: "{{ juniper_junos_role_path }}"
+    tasks_from: get_Facts
+  vars:
+    junos_get_facts_subset:
+      - default
+      - bridging
+      - interfaces
+
+- assert:
+    that:
+      - "'juniper_junos' in ansible_facts"
+      - "'interfaces' in ansible_facts['juniper_junos']"
+      - "'vlans' in ansible_facts['juniper_junos']"
+      - "'system' in ansible_facts['juniper_junos']"
+      - "'memory' in ansible_facts['juniper_junos']['system']"
+      - "'storage' in ansible_facts['juniper_junos']['system']"

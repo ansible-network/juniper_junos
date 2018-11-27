@@ -1,0 +1,21 @@
+---
+vars:
+  system:
+    key: "version"
+    values:
+      host_name: "{{ item.host_name }}"
+      product_model: "{{ item.product_model }}"
+      junos_version: "{{ item.junos_version }}"
+      package_name: "{{ item.package_name }}"
+      package_comment: "{{ item.package_comment }}"
+
+keys:
+  system:
+    value: "{{ system }}"
+    top: software-information
+    items:
+      host_name: host-name
+      product_model: product-model
+      junos_version: junos-version
+      package_name: package-information/name
+      package_comment: package-information/comment

@@ -3,3 +3,4 @@
 
 - import_playbook: config_manager/test.yml
 - import_playbook: configure_user/test.yml
+- import_playbook: get_facts/test.yml
