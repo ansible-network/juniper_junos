@@ -25,3 +25,4 @@
       - configure_netconf
       - configure_user
       - configure_vlan
+      - configure_system_properties

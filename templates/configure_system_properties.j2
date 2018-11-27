@@ -1,0 +1,44 @@
+{% for sys_prop in system_properties %}
+
+{% if sys_prop.state is defined and sys_prop.state == 'absent' %}
+delete system host-name {{ sys_prop.host_name }}
+delete system domain-name {{ sys_prop.domain_name }}
+delete system name-server {{ sys_prop.name_server }}
+delete routing-instances {{ sys_prop.vrf_routing_instance }}
+
+{% else %}
+
+set system host-name {{ sys_prop.host_name | default(omit) }}
+set system domain-name {{ sys_prop.domain_name | default(omit) }}
+set system name-server {{ sys_prop.name_server | default(omit) }}
+
+{% if sys_prop.vrf_routing_instance is defined %}
+
+set routing-instances {{ sys_prop.vrf_routing_instance }} instance-type vrf
+set routing-instances {{ sys_prop.vrf_routing_instance }} interface {{ sys_prop.vrf_interface }}
+set routing-instances {{ sys_prop.vrf_routing_instance }} route-distinguisher {{ sys_prop.vrf_route_distinguisher }}
+
+{% if sys_prop.vrf_target is defined %}
+set routing-instances {{ sys_prop.vrf_routing_instance }} vrf-target {{ sys_prop.vrf_target }}
+{% endif %}
+
+{% if sys_prop.vrf_import is defined %}
+set routing-instances {{ sys_prop.vrf_routing_instance }} vrf-import {{ sys_prop.vrf_import }}
+{% endif %}
+
+{% if sys_prop.vrf_export is defined %}
+set routing-instances {{ sys_prop.vrf_routing_instance }} vrf-export {{ sys_prop.vrf_export }}
+{% endif %}
+
+{% if sys_prop.vrf_table_label is defined and sys_prop.vrf_table_label == 'source-class-usage' %}
+set routing-instances {{ sys_prop.vrf_routing_instance }} vrf-table-label {{ sys_prop.vrf_table_label }}
+{% elif sys_prop.vrf_table_label is defined and sys_prop.vrf_table_label == 'static' and sys_prop.vrf_table_static_value is defined %}
+set routing-instances {{ sys_prop.vrf_routing_instance }} vrf-table-label static {{ sys_prop.vrf_table_static_value }}
+{% else %}
+set routing-instances {{ sys_prop.vrf_routing_instance }} vrf-table-label
+{% endif %}
+
+{% endif %}
+
+{% endif %}
+{% endfor %}

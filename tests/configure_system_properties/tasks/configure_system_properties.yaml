@@ -1,0 +1,66 @@
+---
+- debug: 
+    msg: "START configure_system_properties function on connection={{ ansible_connection }}"
+
+- name: ensure netconf is enabled
+  junos_netconf:
+    netconf_port: "{{ netconf_port }}"
+
+- name: setup - remove user config
+  junos_config: &rm
+    lines:
+      - delete system host-name test-sys-prop
+      - delete system domain-name hostname.com
+      - delete system name-server 192.168.1.1
+      - delete routing-instances test
+  connection: netconf
+
+- name: include juniper_junos load function
+  include_role:
+    name: "{{ juniper_junos_role_path }}"
+    tasks_from: configure_vlans
+  vars:
+    system_properties:
+      - host_name: test-sys-prop
+        domain_name: hostname.com
+        name_server: 192.168.1.1
+        vrf_routing_instance: test
+        vrf_interface: ge-0/0/2
+        vrf_route_distinguisher: 10.58.255.1:37
+        vrf_target: target:10.58.255.1:37
+      - host_name: test_sys_prop
+        domain_name: hostname.com
+        name_server: 192.168.1.1
+        vrf_routing_instance: test
+        vrf_interface: ge-0/0/2
+        vrf_route_distinguisher: 10.58.255.1:37
+        vrf_target: target:10.58.255.1:37
+
+- name: fetch system properties config
+  junos_command:
+    commands: show configuration system | display set
+  register: show_system_result
+
+- assert:
+    that:
+      - "'set system host-name test-sys-prop' in show_system_result.stdout_lines[0]"
+      - "'set system domain-name hostname.com' in show_system_result.stdout_lines[0]"
+      - "'set system name-server 192.168.1.1' in show_system_result.stdout_lines[0]"
+
+- name: fetch system properties vrf config
+  junos_command:
+    commands: show configuration routing-instances | display set
+  register: show_system_vrf_result
+
+- assert:
+    that:
+      - "'set routing-instances test instance-type vrf' in show_system_vrf_result.stdout_lines[0]"
+      - "'set routing-instances test interface ge-0/0/2.0' in show_system_vrf_result.stdout_lines[0]"
+      - "'set routing-instances test route-distinguisher 10.58.255.1:37' in show_system_vrf_result.stdout_lines[0]"
+      - "'set routing-instances test vrf-target target:10.58.255.1:37' in show_system_vrf_result.stdout_lines[0]"
+
+- name: teardown - remove system properties config
+  junos_config: *rm
+  connection: netconf
+- debug:
+    msg: "END configure_vlans function on connection={{ ansible_connection }}"

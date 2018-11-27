@@ -1,0 +1,7 @@
+---
+argument_spec:
+  ansible_network_os:
+    description:
+    - Set the name of the Ansible network OS platform.  This value should be
+      set to `junos` for this provider.
+    required: yes

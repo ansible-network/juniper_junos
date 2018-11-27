@@ -1,0 +1,6 @@
+---
+- name: set role path
+  set_fact:
+    juniper_junos_role_path: "{{ role_path.split('/tests/configure_system_properties/configure_system_properties')[0] }}"
+- name: test configure_system_properties function
+  import_tasks: configure_system_properties.yaml
