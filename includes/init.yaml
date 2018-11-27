@@ -24,3 +24,4 @@
       - get_facts
       - configure_netconf
       - configure_user
+      - configure_vlan
