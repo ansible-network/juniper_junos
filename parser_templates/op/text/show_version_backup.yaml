@@ -1,0 +1,35 @@
+---
+- name: parser meta data
+  parser_metadata:
+    version: 1.0
+    command: show version
+    network_os: junos
+
+- name: match version
+  pattern_match:
+    regex: "Junos: ([^\\s]+)"
+  register: version
+
+- name: match hostname
+  pattern_match:
+    regex: "Hostname: (.+)"
+  register: hostname
+
+- name: match model
+  pattern_match:
+    regex: "Model: (.+)"
+  register: model
+
+- name: build ios system state facts
+  json_template:
+    template:
+      - key: version
+        value: "{{ version.matches.0 }}"
+      - key: hostname
+        value: "{{ hostname.matches.0 }}"
+      - key: model
+        value: "{{ model.matches.0 }}"
+  register: system
+  export: true
+  export_as: dict
+  extend: juniper_junos

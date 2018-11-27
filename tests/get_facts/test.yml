@@ -1,0 +1,9 @@
+- hosts: junos
+  connection: network_cli
+  roles:
+    - get_facts
+
+- hosts: junos
+  connection: netconf
+  roles:
+    - get_facts

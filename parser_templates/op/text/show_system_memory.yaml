@@ -1,0 +1,59 @@
+---
+- name: parser meta data
+  parser_metadata:
+    version: 1.0
+    command: show system memory
+    network_os: junos
+
+- name: match sections
+  pattern_match:
+    regex: "^System memory usage distribution:"
+    match_all: yes
+    match_greedy: yes
+  register: context
+
+- name: match memory values
+  pattern_group:
+    - name: match total memory
+      pattern_match:
+        regex: "Total memory:\\s+(\\S+\\s\\S+)"
+        content: "{{ item }}"
+      register: total_mem
+
+    - name: match reserved memory
+      pattern_match:
+        regex: "Reserved memory:\\s+(\\S+\\s\\S+)"
+        content: "{{ item }}"
+      register: reserve_mem
+
+    - name: match cache memory
+      pattern_match:
+        regex: "Cache memory:\\s+(\\S+\\s\\S+)"
+        content: "{{ item }}"
+      register: cache_mem
+
+    - name: match free memory
+      pattern_match:
+        regex: "Free memory:\\s+(\\S+\\s\\S+)"
+        content: "{{ item }}"
+      register: free_mem
+
+  loop: "{{ context }}"
+  register: values
+
+- name: template interface values
+  loop: "{{ values }}"
+  register: memory
+  export: yes
+  export_as: dict
+  extend: juniper_junos.system
+  json_template:
+    template:
+        - key: total_mem
+          value: "{{ item.total_mem.matches.0 }}"
+        - key: reserve_mem
+          value: "{{ item.reserve_mem.matches.0 }}"
+        - key: cache_mem
+          value: "{{ item.cache_mem.matches.0 }}"
+        - key: free_mem
+          value: "{{ item.free_mem.matches.0 }}"

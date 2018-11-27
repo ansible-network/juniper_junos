@@ -1,0 +1,23 @@
+---
+vars:
+  system:
+    key: "version_re_{{ item.re_name }}"
+    values:
+      re_name: "{{ item.re_name }}"
+      host_name: "{{ item.host_name }}"
+      product_model: "{{ item.product_model }}"
+      junos_version: "{{ item.junos_version }}"
+      package_name: "{{ item.package_name }}"
+      package_comment: "{{ item.package_comment }}"
+
+keys:
+  system:
+    value: "{{ system }}"
+    top: multi-routing-engine-results/multi-routing-engine-item
+    items:
+      re_name: re-name
+      host_name: software-information/host-name
+      product_model: software-information/product-model
+      junos_version: software-information/junos-version
+      package_name: software-information/package-information/name
+      package_comment: software-information/package-information/comment

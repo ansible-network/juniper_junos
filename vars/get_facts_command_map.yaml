@@ -12,26 +12,50 @@
 #   * groups - a list of one or more groups the command belongs to
 #   * pre_hook - path to the set of tasks to execute before running the command
 #   * post_hook - path to the set of tasks to execute after running the command
-#
+#   * format - format of response recevied from target device that is `xml` or `text`
+#   * fact_type - Valid only for `format=xml` and used to extend the key in `ansible_facts.juniper_junos`
 # Please see the [documentation](https://github.com/ansible-network/juniper_junos/blob/devel/tasks/get_facts.yaml) for more details.
 #
-- command: show version
-  parser: show_version.yaml
-  groups:
-    - default
-
 - command: show vlans
   parser: show_vlans.yaml
+  format: text
   groups:
+    - default
     - bridging
 
 - command: show interfaces
-  parser: show interfaces.yaml
-  groups:
-    - interfaces
-
-- command: show lldp neighbors
-  parser: show_lldp_neighbors.yaml
+  parser: show_interfaces.yaml
+  format: text
   groups:
     - default
-    - lldp
+    - interfaces
+
+- command: show system memory
+  parser: show_system_memory.yaml
+  format: text
+  groups:
+    - default
+    - memory
+
+- command: show system storage
+  parser: show_system_storage.yaml
+  format: text
+  groups:
+    - default
+    - memory
+
+- command: show version | display xml
+  parser: show_version.yaml
+  format: xml
+  fact_type: system
+  groups:
+    - default
+    - system
+
+- command: show version | display xml
+  parser: show_version_multi_re.yaml
+  format: xml
+  fact_type: system
+  groups:
+    - default
+    - system

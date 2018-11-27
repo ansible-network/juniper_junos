@@ -1,0 +1,40 @@
+---
+- name: parser meta data
+  parser_metadata:
+    version: 1.0
+    command: show vlans
+    network_os: junos
+
+- name: match cli sections
+  pattern_match:
+    regex: "^(?!Routing instance)[^\\s].*$"
+    match_all: yes
+    match_greedy: yes
+  register: cli_section
+
+- name: match cli values
+  pattern_group:
+    - name: match row
+      pattern_match:
+        regex: '^(?P<routing_instance>.*?)\s+(?P<name>.*?)\s+(?P<tag>[^\s+]*)\s*(?P<interfaces>.*?)'
+        content: "{{ item }}"
+      register: fact
+  loop: "{{ cli_section }}"
+  register: cli_values
+
+- name: template to platform vlan
+  export: yes
+  export_as: list
+  extend: juniper_junos.vlans
+  loop: "{{ cli_values }}"
+  register: details
+  json_template:
+    template:
+      - key: routing_instance
+        value: "{{ item.fact.routing_instance }}"
+      - key: name
+        value: "{{ item.fact.name }}"
+      - key: tag
+        value: "{{ item.fact.tag }}"
+      - key: interfaces
+        value: "{{ item.fact.interfaces }}"

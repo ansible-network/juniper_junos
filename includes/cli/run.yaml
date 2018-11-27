@@ -3,6 +3,11 @@
   include_tasks: "{{ junos_run_cli_command_pre_hook }}"
   when: junos_run_cli_command_pre_hook is defined and junos_run_cli_command_pre_hook
 
+- name: check for ansible_connection==network_cli
+  fail:
+    msg: "'ansible_connection' value should be network_cli"
+  when: ansible_connection != 'network_cli'
+
 - name: run command and parse output
   cli:
     command: "{{ junos_command }}"
@@ -18,6 +23,57 @@
         - "{{ role_path }}/parser_templates"
   loop_control:
     loop_var: parser
+  when: junos_output_format == 'text'
+
+- name: run command and parse xml output
+  block:
+    - name: check for task args
+      fail:
+        msg: "'rpc' and 'command' is mutually exclusive"
+      when: junos_command and junos_rpc
+
+    - name: run command
+      junos_command:
+        commands: "{{ junos_command }}"
+      register: junos_command_output
+      when: junos_command != ""
+
+    - name: run rpc command
+      junos_command:
+        rpcs: "{{ junos_rpc }}"
+      register: junos_rpc_output
+      when: junos_rpc != ""
+
+    - name: set output varaible
+      set_fact:
+        junos_output: "{{ junos_command_output['stdout'][0].split('</rpc-reply>')[0] + '</rpc-reply>' }}"
+      when: "'stdout' in junos_command_output"
+
+    - name: set output varaible
+      set_fact:
+        junos_output: "{{ junos_rpc_output['stdout'][0].split('</rpc-reply>')[0] + '</rpc-reply>' }}"
+      when: "'stdout' in junos_rpc_output"
+
+    - name: parse xml output and convert to json
+      set_fact:
+        junos_parsed_facts: "{{ junos_output | parse_xml(parser) }}"
+      with_first_found:
+        - files:
+            - "{{ junos_parser }}"
+          paths:
+            - "{{ playbook_dir }}/parser_templates/junos"
+            - "~/.ansible/ansible_network/parser_templates/junos"
+            - "/etc/ansible/ansible_network/parser_templates/junos"
+            - "{{ role_path }}/parser_templates"
+      loop_control:
+        loop_var: parser
+
+    - name: Update to juniper_junos facts
+      set_fact:
+        ansible_facts: "{{ ansible_facts | combine({ 'juniper_junos': junos_parsed_facts[junos_fact_type] }, recursive=True) }}"
+      when: junos_parsed_facts[junos_fact_type] != {}
+
+  when: junos_output_format == 'xml'
 
 - name: run cli command post hook
   include_tasks: "{{ junos_run_cli_command_post_hook }}"
