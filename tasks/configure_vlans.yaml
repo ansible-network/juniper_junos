@@ -1,0 +1,38 @@
+---
+- name: validate role spec
+  validate_role_spec:
+    spec: configure_vlan_spec.yaml
+  delegate_to: localhost
+
+- name: "check if vlan ID is greater than 1"
+  fail:
+    msg: "vlan_id is less than 1 (valid-range: 1-4094)"
+  loop: "{{ vlans }}"
+  loop_control:
+    loop_var: vlan
+  when:
+    - vlan.id < 1
+  delegate_to: localhost
+
+- name: "check if vlan ID is less than 4094"
+  fail:
+    msg: "vlan_id is greater than 4094 (valid-range: 1-4094)"
+  loop: "{{ vlans }}"
+  loop_control:
+    loop_var: vlan
+  when:
+    - vlan.id > 4094
+  delegate_to: localhost
+
+- name: "fetch existing vlan(s)"
+  cli:
+    command: show vlans
+  register: vlan_output
+
+- name: "fetch template for configuring vlan(s)"
+  set_fact:
+    junos_config_text: "{{ lookup('config_template', 'configure_vlans.j2') }}"
+  delegate_to: localhost
+
+- include_tasks: config_manager/load.yaml
+  delegate_to: localhost

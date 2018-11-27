@@ -1,0 +1,19 @@
+{% for vlan in vlans %}
+
+{% if vlan.state is defined and vlan.state == 'absent' %}
+delete vlans {{ vlan.name }}
+
+{% else %}
+
+set vlans {{ vlan.name }} vlan-id {{ vlan.id }}
+
+{% if vlan.description is defined %}
+set vlans {{ vlan.name }} description "{{ vlan.description }}"
+{% endif %}
+
+{% if vlan.interface is defined %}
+set interfaces {{ vlan.interface }} unit 0 family ethernet-switching vlan members {{ vlan.name }}
+{% endif %}
+
+{% endif %}
+{% endfor %}

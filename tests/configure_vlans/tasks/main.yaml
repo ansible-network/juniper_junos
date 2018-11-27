@@ -1,0 +1,7 @@
+---
+- name: set role path
+  set_fact:
+    juniper_junos_role_path: "{{ role_path.split('/tests/configure_vlans/configure_vlans')[0] }}"
+
+- name: test configure_vlans function
+  import_tasks: configure_vlans.yml

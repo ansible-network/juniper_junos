@@ -1,0 +1,18 @@
+---
+argument_spec:
+  ansible_network_os:
+    description:
+    - Set the name of the Ansible network OS platform.  This value should be
+      set to `junos` for this provider.
+    required: yes
+
+  id:
+    description:
+    - Provide the vlan name that need to be configured to the device
+    required: yes
+
+  name:
+    description:
+    - Provide the vlan name that need to be configured to the device on the 
+      particular vlan id
+    required: yes
