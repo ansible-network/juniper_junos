@@ -1,0 +1,32 @@
+---
+- name: validate role spec
+  validate_role_spec:
+    spec: configure_system_property_spec.yaml
+  delegate_to: localhost
+ - name: "check if vrf-table-label static value is greater than 16"
+  fail:
+    msg: "vrf table static value should be greater than 16 (valid-range: 16-1048575)"
+  loop: "{{ system_properties }}"
+  loop_control:
+    loop_var: sys_prop
+  when:
+    - sys_prop.vrf_table_static_value is defined
+    - sys_prop.vrf_table_static_value < 16
+  delegate_to: localhost
+ - name: "check if vrf-table-label static value is less than 1048575"
+  fail:
+    msg: "vrf table static value should be less than 1048575 (valid-range: 16-1048575)"
+  loop: "{{ system_properties }}"
+  loop_control:
+    loop_var: sys_prop
+  when:
+    - sys_prop.vrf_table_static_value is defined
+    - sys_prop.vrf_table_static_value > 1048575
+  delegate_to: localhost
+ - name: "fetch template for configuring system properties"
+  set_fact:
+    junos_config_text: "{{ lookup('config_template', 'configure_system_properties.j2') }}"
+  when: system_properties
+  delegate_to: localhost
+ - include_tasks: config_manager/load.yaml
+  when: system_properties
