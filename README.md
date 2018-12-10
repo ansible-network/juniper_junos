@@ -25,6 +25,7 @@ the function in an Ansible playbook.
 * get_facts [[source]](https://github.com/ansible-network/juniper_junos/blob/devel/tasks/get_facts.yaml) [[docs]](https://github.com/ansible-network/juniper_junos/blob/devel/docs/get_facts.md)
 * configure_netconf [[source]](https://github.com/ansible-network/juniper_junos/blob/devel/tasks/configure_netconf.yaml) [[docs]](https://github.com/ansible-network/juniper_junos/blob/devel/docs/configure_netconf.md)
 * configure_system_properties [[source]](https://github.com/ansible-network/juniper_junos/blob/devel/tasks/configure_system_properties.yaml) [[docs]](https://github.com/ansible-network/juniper_junos/blob/devel/docs/configure_system_properties.md)
+* configure_lldp [[source]](https://github.com/ansible-network/juniper_junos/blob/devel/tasks/configure_lldp.yaml) [[docs]](https://github.com/ansible-network/juniper_junos/blob/devel/docs/configure_lldp.md)
 
 ## License
 
