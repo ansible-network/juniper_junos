@@ -1,0 +1,23 @@
+{% for item in lldp %}
+
+{% if item.state is defined and item.state == 'absent' %}
+delete protocols lldp
+
+{% else %}
+
+set protocols lldp advertisement-interval {{ item.advertisement_interval | default(omit) }}
+set protocols lldp hold-multiplier {{ item.hold_multiplier | default(omit) }}
+{% if item.interface is defined %}
+set protocols lldp interface {{ item.interface | default(omit) }}
+{% endif %}
+set protocols lldp lldp-configuration-notification-interval {{ item.lcni | default(omit) }}
+set protocols lldp management-address {{ item.management_address | default(omit) }}
+set protocols lldp ptopo-configuration-maximum-hold-time {{ item.pcmht | default(omit) }}
+set protocols lldp ptopo-configuration-trap-interval {{ item.pcti | default(omit) }}
+set protocols lldp transmit-delay {{ item.transmit_delay | default(omit) }}
+{% if item.disble_interface is defined %}
+set protocols lldp interface {{ item.disble_interface }} disable
+{% endif %}
+
+{% endif %}
+{% endfor %}
