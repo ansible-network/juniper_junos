@@ -1,5 +1,0 @@
-- project:
-    check:
-      jobs:
-        - ansible-network-tox-py27
-        - ansible-network-tox-py36
