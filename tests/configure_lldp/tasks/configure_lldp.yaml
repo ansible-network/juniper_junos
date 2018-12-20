@@ -1,0 +1,52 @@
+---
+- debug: 
+    msg: "START configure_lldp function on connection={{ ansible_connection }}"
+
+- name: ensure netconf is enabled
+  junos_netconf:
+    netconf_port: "{{ netconf_port }}"
+
+- name: setup - remove lldp config
+  junos_config: &rm
+    lines:
+      - delete protocols lldp
+  connection: netconf
+
+- name: include juniper_junos load function
+  include_role:
+    name: "{{ juniper_junos_role_path }}"
+    tasks_from: configure_lldp
+  vars:
+    lldp:
+      - advertisement_interval: 60
+        hold_multiplier: 60
+        interface: all
+        lcni: 60
+        management_address: 192.168.1.1
+        pcmht: 4
+        pcti: 1
+        transmit_delay: 1
+        disble_interface: ge-0/0/2
+
+- name: fetch lldp config
+  junos_command:
+    commands: show configuration protocols lldp | display set
+  register: show_ptotocol_lldp_result
+
+- assert:
+    that:
+      - "'set protocols lldp management-address 192.168.1.1' in show_ptotocol_lldp_result.stdout_lines[0]"
+      - "'set protocols lldp advertisement-interval 60' in show_ptotocol_lldp_result.stdout_lines[0]"
+      - "'set protocols lldp transmit-delay 1' in show_ptotocol_lldp_result.stdout_lines[0]"
+      - "'set protocols lldp ptopo-configuration-trap-interval 1' in show_ptotocol_lldp_result.stdout_lines[0]"
+      - "'set protocols lldp ptopo-configuration-maximum-hold-time 4' in show_ptotocol_lldp_result.stdout_lines[0]"
+      - "'set protocols lldp lldp-configuration-notification-interval 60' in show_ptotocol_lldp_result.stdout_lines[0]"
+      - "'set protocols lldp interface all' in show_ptotocol_lldp_result.stdout_lines[0]"
+      - "'set protocols lldp interface ge-0/0/2 disable' in show_ptotocol_lldp_result.stdout_lines[0]"
+
+- name: teardown - remove lldp config
+  junos_config: *rm
+  connection: netconf
+
+- debug: 
+    msg: "END configure_lldp function on connection={{ ansible_connection }}"

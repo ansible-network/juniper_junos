@@ -1,0 +1,86 @@
+---
+- name: validate role spec
+  validate_role_spec:
+    spec: configure_lldp_spec.yaml
+  delegate_to: localhost
+
+- name: "check if advertisement-interval value is greater than 5 and less than 32768"
+  fail:
+    msg: "advertisement_interval (valid-range: 5-32768 seconds)"
+  loop: "{{ lldp }}"
+  loop_control:
+    loop_var: item
+  when:
+    - item.advertisement_interval is defined
+    - item.advertisement_interval > "4"
+    - item.advertisement_interval < 32768
+  delegate_to: localhost
+
+- name: "check if hold-multiplier value is greater than 2 and less than 10"
+  fail:
+    msg: "hold_multiplier (valid-range: 2-10)"
+  loop: "{{ lldp }}"
+  loop_control:
+    loop_var: item
+  when:
+    - item.hold_multiplier is defined
+    - item.hold_multiplier > 1
+    - item.hold_multiplier < 10
+  delegate_to: localhost
+
+- name: "check if lldp-configuration-notification-interval is greater than 5 and less than 3600"
+  fail:
+    msg: "lcni valid-range: 5-3600 seconds)"
+  loop: "{{ lldp }}"
+  loop_control:
+    loop_var: item
+  when:
+    - item.lcni is defined
+    - item.lcni > "4"
+    - item.lcni < 3600
+  delegate_to: localhost
+
+- name: "check if ptopo-configuration-maximum-hold-time is greater than 1 and less than 2147483647"
+  fail:
+    msg: "pcmht (valid-range: 1-2147483647 seconds)"
+  loop: "{{ lldp }}"
+  loop_control:
+    loop_var: item
+  when:
+    - item.pcmht is defined
+    - item.pcmht > "1"
+    - item.pcmht < 2147483647
+  delegate_to: localhost
+
+- name: "check if ptopo-configuration-trap-interval is greater than 0 and less than 3600"
+  fail:
+    msg: "pcti (valid-range: 0-3600)"
+  loop: "{{ lldp }}"
+  loop_control:
+    loop_var: item
+  when:
+    - item.pcti is defined
+    - item.pcti > "0"
+    - item.pcti < 3600
+  delegate_to: localhost
+
+- name: "check if transmit-delay is greater than 1 and less than 8192"
+  fail:
+    msg: "transmit_delay (valid-range: 1-8192)"
+  loop: "{{ lldp }}"
+  loop_control:
+    loop_var: item
+  when:
+    - item.transmit_delay is defined
+    - item.transmit_delay > "0"
+    - item.transmit_delay < 8192
+  delegate_to: localhost
+
+- name: "fetch template for configuring lldp"
+  set_fact:
+    junos_config_text: "{{ lookup('config_template', 'configure_lldp.j2') }}"
+  when: lldp
+  delegate_to: localhost
+
+- include_tasks: config_manager/load.yaml
+  when: lldp

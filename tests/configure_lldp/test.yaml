@@ -1,0 +1,6 @@
+- hosts: appliance
+  connection: network_cli
+  roles:
+    - configure_lldp
+  vars:
+    netconf_port: 830
