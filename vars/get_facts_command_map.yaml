@@ -59,3 +59,17 @@
   groups:
     - default
     - system
+
+- command: show chassis alarms
+  parser: show_chassis_alarms.yaml
+  format: text
+  groups:
+    - default
+    - alarms
+
+- command: show system alarms
+  parser: show_system_alarms.yaml
+  format: text
+  groups:
+    - default
+    - alarms
