@@ -59,3 +59,10 @@
   groups:
     - default
     - system
+
+- command: show ospf neighbor detail
+  parser: show_ospf_neighbor_detail.yaml
+  format: text
+  groups:
+    - default
+    - routing

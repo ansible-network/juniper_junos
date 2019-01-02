@@ -1,0 +1,69 @@
+---
+- name: parser meta data
+  parser_metadata:
+    version: 1.0
+    command: show ospf neighbor detail
+    network_os: junos
+
+- name: match sections
+  pattern_match:
+    regex: "^((?:[0-9]{1,3}\\.){3}[0-9]{1,3})\\s*([A-Za-z0-9\\-/.]*)\\s*(\\w*)"
+    match_all: yes
+    match_greedy: yes
+  register: context
+
+- name: match neighbor ip values
+  pattern_group:
+    - name: match IP
+      pattern_match:
+        regex: "^((?:[0-9]{1,3}\\.){3}[0-9]{1,3})"
+        content: "{{ item }}"
+      register: ip
+
+    - name: match ospf interface
+      pattern_match:
+        regex: "^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}\\s*([A-Za-z0-9\\-/.]*)\\s*\\w*"
+        content: "{{ item }}"
+      register: interface
+
+    - name: match ospf state
+      pattern_match:
+        regex: "^(?:(?:[0-9]{1,3}\\.){3}[0-9]{1,3})\\s*(?:[A-Za-z0-9\\-/.]*)\\s*(\\w*)"
+        content: "{{ item }}"
+      register: state
+
+    - name: match ospf area
+      pattern_match:
+        regex: "Area ((?:[0-9]{1,3}\\.){3}[0-9]{1,3})"
+        content: "{{ item }}"
+      register: area
+
+    - name: match ospf uptime
+      pattern_match:
+        regex: "Up (.*),"
+        content: "{{ item }}"
+      register: uptime
+
+  loop: "{{ context }}"
+  register: values
+
+- name: template interface values
+  loop: "{{ values }}"
+  register: routing
+  export: yes
+  export_as: dict
+  extend: juniper_junos
+  json_template:
+    template:
+      - key: "{{ item.ip.matches.0 }}"
+        object:
+          - key: ip
+            value: "{{ item.ip.matches.0 }}"
+          - key: area
+            value: "{{ item.area.matches.0 }}"
+          - key: interface
+            value: "{{ item.interface.matches.0 }}"
+          - key: state
+            value: "{{ item.state.matches.0 }}"
+          - key: uptime
+            value: "{{ item.uptime.matches.0 }}"
