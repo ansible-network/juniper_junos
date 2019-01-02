@@ -167,6 +167,7 @@ The default value is `default`
 * interfaces
 * bridging
 * alarms
+* routing
 
 ### junos_get_facts_command_map
 
