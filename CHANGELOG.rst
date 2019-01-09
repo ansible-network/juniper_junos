@@ -2,6 +2,29 @@
 Ansible Network juniper_junos
 =============================
 
+.. _Ansible Network juniper_junos_v2.7.2:
+
+v2.7.2
+======
+
+.. _Ansible Network juniper_junos_v2.7.2_Major Changes:
+
+Major Changes
+-------------
+
+- Added alarm parsers for get_facts `juniper_junos#34 <https://github.com/ansible-network/juniper_junos/pull/34>`_.
+
+- Added ospf parsers for get_facts `juniper_junos#35 <https://github.com/ansible-network/juniper_junos/pull/35>`_.
+
+
+.. _Ansible Network juniper_junos_v2.7.2_New Functions:
+
+New Functions
+-------------
+
+- Add lldp configure function `juniper_junos#27 <https://github.com/ansible-network/juniper_junos/pull/27>`_.
+
+
 .. _Ansible Network juniper_junos_v2.7.1:
 
 v2.7.1

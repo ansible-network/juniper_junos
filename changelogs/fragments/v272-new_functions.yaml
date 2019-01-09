@@ -1,0 +1,2 @@
+new_functions:
+- Add lldp configure function `juniper_junos#27 <https://github.com/ansible-network/juniper_junos/pull/27>`_.
