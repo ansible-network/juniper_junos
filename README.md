@@ -1,6 +1,6 @@
 # juniper_junos
 
-This Ansible Network role provides a set of network functions that are designed
+This Ansible network role provides a set of network functions that are designed
 to work with Juniper JUNOS network devices.  The functions included in this role
 include gathering facts from JUNOS devices, performing declarative configuration
 tasks and handling various operational tasks on the device.
